@@ -1,0 +1,25 @@
+<GDAL_WMS>
+    <Service name="WMS">
+        <Version>1.1.1</Version>
+        <ServerUrl>{{ layerurl }}</ServerUrl>
+        {% if layer.transparent %}
+        <ImageFormat>image/png</ImageFormat>
+        <Transparent>{{ layer.transparent }}</Transparent>
+        {% else %}
+        <ImageFormat>image/jpeg</ImageFormat>
+        {% endif %}
+        <Layers>{{ layer.layers }}</Layers>
+    </Service>
+    <DataWindow>
+        <UpperLeftX>{{ extent.0 }}</UpperLeftX>
+        <UpperLeftY>{{ extent.3 }}</UpperLeftY>
+        <LowerRightX>{{ extent.2 }}</LowerRightX>
+        <LowerRightY>{{ extent.1 }}</LowerRightY>
+        <SizeX>{{ sizex }}</SizeX>
+        <SizeY>{{ sizey }}</SizeY>
+    </DataWindow>
+    {% if layer.transparent %}
+    <BandsCount>4</BandsCount>
+    {% endif %}
+    <UserPwd>{{ wmsauth }}</UserPwd>
+</GDAL_WMS>

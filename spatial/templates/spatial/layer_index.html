@@ -1,0 +1,101 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+    {% load django_static %}
+    {% staticall %}
+        <script type="text/javascript" src="js/libs/proj4js-compressed.js"></script>
+        <script type="text/javascript" src="js/libs/OpenLayers.js"></script>
+    {% endstaticall %}
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{{ site_name }}</h1>
+{% endblock %}
+
+{% block userlinks %}
+    <a href="#">{% trans 'Documentation' %}</a> / <a href="{{ logout_url }}">{% trans 'Log out' %}</a>
+{% endblock %}
+
+{% block nav-global %}<span class="float-left"></span>{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/apps/spatial/layers.html">{% trans 'Layers' %}</a> &rsaquo; {{ layer.layer_id }}</div>
+{% if errors %}
+<ul class="errorlist">{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+{% endif %}{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block content %}
+<div id="content-main">
+<div class="module"> 
+    <table summary="Formats available for this layer"> 
+    <caption>Download Formats</caption> 
+    
+        <tr> 
+            <td><a href="{{ layer.layer_id }}.gml">GML3</a></td> 
+            <td><a href="{{ layer.layer_id }}.kml">KML</a></td> 
+            <td><a href="{{ layer.layer_id }}.rss">GeoRSS</a></td> 
+            <td><a href="{{ layer.layer_id }}.zip">ShapeFile</a></td> 
+            <td><a href="{{ layer.layer_id }}.json">GeoJSON</a></td> 
+            <td><a href="{{ layer.layer_id }}.csv">CSV</a></td> 
+            <td><a href="/apps/spatial/styles/{{ layer.layer_id }}.sld">SLD</a></td>
+        </tr> 
+    
+    </table> 
+</div>
+<div class="module"> 
+    <table summary="Actions available for this layer">
+    <caption>Actions</caption> 
+    
+        <tr> 
+            <th scope="row">Upload New File</th>
+            <form method="POST" enctype="multipart/form-data">
+            <td>
+                <input type="file" name="layer">
+            </td><td>
+                <input type="submit" value="Upload New File">
+            </td>
+            </form>
+        </tr>
+        <tr>
+            <th scope="row"><a href="http://en.geopublishing.org/AtlasStyler" target="_blank">AtlasStyler</a></th>
+            <td><a href="/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName={{ layer.layers }}&outputFormat=SHAPE-ZIP">ShapeFile</a>, <a href="/apps/spatial/styles/{{ layer.layer_id }}.sld">SLD</a></td>
+            <td>Use AtlasStyler to style ShapeFile, then upload your SLD to update a layers style</td>
+        </tr>
+        <tr> 
+            <th scope="row">Upload New Style</th>
+            <form method="POST" enctype="multipart/form-data">
+            <td>
+                <input type="file" name="style">
+            </td><td>
+                <input type="submit" value="Upload New Style">
+            </td>
+            </form>
+        </tr> 
+        <tr> 
+            <form method="POST" enctype="multipart/form-data">
+            <th scope="row">Select Style from Library</th>
+            <td>
+                <select name="style">
+                    {% for style in styles %}
+                    <option value="{{ style }}">{{ style }}</option>
+                    {% endfor %}
+                </select>
+            </td><td>
+                <input type="submit" value="Select New Style">
+            </td>
+            </form>
+        </tr> 
+    
+    </table> 
+</div>
+</div>
+<div id="content-related"> 
+    <div class="module" id="recent-actions-module"> 
+        <h2>Layer Preview</h2>
+        <img src="/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers={{ layer.layers }}&styles=&bbox={{ featureType.nativeBoundingBox.minx }},{{ featureType.nativeBoundingBox.miny }},{{ featureType.nativeBoundingBox.maxx }},{{ featureType.nativeBoundingBox.maxy }}&width={{ preview.width }}&height={{ preview.height}}&srs={{ featureType.nativeBoundingBox.crs }}&format=image/png" />
+    </div> 
+</div> 
+{% endblock %}

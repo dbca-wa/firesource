@@ -1,0 +1,53 @@
+MAP
+
+NAME firesource
+STATUS OFF
+EXTENT -180 -90 180 90
+SIZE 600 600
+
+MAXSIZE 40960
+
+OUTPUTFORMAT
+  NAME jpeg
+  DRIVER AGG/JPEG
+  MIMETYPE "image/jpeg"
+  IMAGEMODE RGB
+END
+
+OUTPUTFORMAT
+  NAME png
+  DRIVER AGG/PNG
+  MIMETYPE "image/png"
+  IMAGEMODE RGBA
+  TRANSPARENT ON
+END
+
+WEB
+  IMAGEPATH "/tmp/"
+  METADATA
+    "wms_title"     "firesource Imagery Server"  ##required
+    "wms_onlineresource"  "https://internal.fms.wa.gov.au/stale/fmsws?map=/etc/tinyows.map&"
+    "wms_srs"       "EPSG:4283"  ##recommended
+  END
+END
+
+PROJECTION
+  "init=epsg:4283"   ##required
+END
+
+#
+# Start of layer definitions
+#
+
+{% for layer in layers %}
+LAYER
+  CONNECTIONTYPE postgis
+  CONNECTION "host={{ host }} dbname={{ dbname }} user={{ user }} password={{ password }} port={{ port }}"
+  DATA "wkb_geometry FROM {{ layer.0 }}" 
+  NAME "{{ layer.0 }}"
+  TYPE {{ layer.1 }}
+  STATUS OFF
+END
+{% endfor %}
+
+END

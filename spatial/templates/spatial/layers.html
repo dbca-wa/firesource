@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+    {% load django_static %}
+    {% staticall %}
+        <script type="text/javascript" src="js/libs/proj4js-compressed.js"></script>
+        <script type="text/javascript" src="js/libs/OpenLayers.js"></script>
+    {% endstaticall %}
+{% endblock %}
+
+{% block title %}Layers{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{{ site_name }}</h1>
+{% endblock %}
+
+{% block userlinks %}
+    <a href="#">{% trans 'Documentation' %}</a> / <a href="{{ logout_url }}">{% trans 'Log out' %}</a>
+{% endblock %}
+
+{% block nav-global %}<span class="float-left"></span>{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs">Layers</div>
+{% if errors %}
+<ul class="errorlist">{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+{% endif %}{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block content %}
+<div id="content-main">
+<div class="module"> 
+    <table summary="Layers registered in the SSS"> 
+    <caption>Registered Layers</caption> 
+     <thead>
+        <tr>
+            {% for key in columns %}
+            <th>{{ key }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    {% for layer in layers %}
+        <tr> {{ layer.as_td|safe }} </tr>
+    {% endfor %}
+    </table>
+</div>
+</div>
+{% endblock %}

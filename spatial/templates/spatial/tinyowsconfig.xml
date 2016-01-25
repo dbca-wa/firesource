@@ -1,0 +1,26 @@
+<tinyows online_resource="https://{{ hostname }}/cgi-bin/tinyows?"
+         schema_dir="/usr/local/tinyows/schema/"
+         check_schema="0"
+         log="/var/log/tinyows.log">
+
+  <pg host="{{ host }}" user="{{ user }}" password="{{ password }}" dbname="{{ dbname }}" port="{{ port }}"/>
+
+  <metadata name="{{ name }}"
+            title="{{ name }}" />
+
+  <contact name="TinyOWS Server"
+           site="http://www.tinyows.org/"
+           email="admin@fms.wa.gov.au" />
+
+  <layer retrievable="1"
+         writable="1"
+         server="/"
+         prefix="pg"
+         name="root"
+         srid="4326, 4283">
+        {% for layer in layers %}
+        <layer name="{{ layer.0 }}" title="{{ layer.0 }}"/>
+        {% endfor %}
+  </layer>
+
+</tinyows>

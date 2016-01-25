@@ -1,0 +1,2 @@
+https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a3.tar.gz
+geopy

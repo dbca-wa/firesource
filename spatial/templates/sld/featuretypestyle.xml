@@ -1,0 +1,8 @@
+<sld:FeatureTypeStyle>
+    <sld:Name>{{ style.name }}</sld:Name>
+    <sld:Title>{{ style.title }}</sld:Title>
+    <sld:Abstract>abstract</sld:Abstract>
+    <sld:FeatureTypeName>Feature</sld:FeatureTypeName>
+    <sld:SemanticTypeIdentifier>generic:geometry</sld:SemanticTypeIdentifier>{% for rule in style.rules %}{{ rule|safe }}{% endfor %}
+</sld:FeatureTypeStyle>
+

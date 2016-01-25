@@ -1,0 +1,91 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+    {% load django_static %}
+    {% staticall %}
+        <script type="text/javascript" src="js/libs/proj4js-compressed.js"></script>
+        <script type="text/javascript" src="js/libs/OpenLayers.js"></script>
+    {% endstaticall %}
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{{ site_name }}</h1>
+{% endblock %}
+
+{% block userlinks %}
+    <a href="#">{% trans 'Documentation' %}</a> / <a href="{{ logout_url }}">{% trans 'Log out' %}</a>
+{% endblock %}
+
+{% block nav-global %}<span class="float-left"></span>{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/apps/spatial/maps.html">{% trans 'Maps' %}</a> &rsaquo; {{ title }}</div>
+{% if errors %}
+<ul class="errorlist">{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+{% endif %}{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block content %}
+<div id="content-main">
+    {% if fmt != 'html' %}
+        <script type="text/JavaScript">
+            setTimeout("location.reload(true);",10000);
+        </script>
+        <h2> Producing {{ fmt }} with template {{ spatialmap.template }} ... </h2>
+        <div class="module">
+            <table summary="Layers">
+            <caption>Layers</caption>
+            {% for layer in spatialmap.print_layers %}
+            <tr>
+                <th scope="row">{{ layer.layer_id }}</th>
+                {% if layer.location %}
+                <td style="color:#4e9a06">{{ layer.location }}</td>
+                {% else %}
+                <td style="color:#ce5c00">Retrieving...</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+{% if fmt == 'html' %}
+<div class="module">
+    <table summary="Versions">
+    <caption>Available Versions</caption>
+        {% for version in versions %}
+        <tr> 
+            <th scope="row">{{ version.utc_string }} UTC, 1:{{ version.scaletext }}</th>
+            <td>{{ version.template }}</td>
+            <td>
+                {% if version.completed_files %}
+                    Download: 
+                {% for output in version.outputs %}
+                    <a href="/apps/spatial/map/{{ output.0 }}">{{ output.1 }}</a>
+                {% endfor %}
+                {% endif %}
+            </td>
+            {% if not readonly %}
+            <form method="GET" action="/apps/spatial/views">
+            <td>
+                <input type="hidden" name="map_id" value="{{ version.map_id }}"></input>
+                <input type="hidden" name="workdir" value="{{ version.workdir }}"></input>
+                <select name="template">
+                    {% for template in templates %}
+                    <option value="{{ template }}">{{ template }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input type="submit" value="Print new version">
+            </td>
+            </form>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+</div>
+{% endblock %}

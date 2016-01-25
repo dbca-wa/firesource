@@ -1,0 +1,30 @@
+{% spaceless %}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    {% load django_static %}
+    {% staticall %}
+        <script type="text/javascript" src="js/libs/jquery-1.5.min.js"></script>
+        <script type="text/javascript" src="reports.js"></script>
+    {% endstaticall %}
+    {% slimall %}
+        <link rel="stylesheet" href="firesource-tidy.css">
+    {% endslimall %}
+</head>
+<body>
+    <h1>Spatial Support System Report</h1>
+    <table class="datatable">
+    <thead>
+        <tr>
+            {% for key in newprops %}
+            <th>{{ key }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    {% for o in results %}
+        <tr> {{ o.as_td|safe }} </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>
+{% endspaceless %}

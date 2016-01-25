@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="//static.dpaw.wa.gov.au/static/libs/openlayers/2.13.1/theme/default/style.css">
+    <link rel="stylesheet" href="//static.dpaw.wa.gov.au/static/firesource/libs/jquery-ui-1.11.4.custom/jquery-ui.min.css">
+    <link rel="stylesheet" href="//static.dpaw.wa.gov.au/static/libs/jquery-layout/1.4.3/layout-default.css">
+    <link rel="stylesheet" href="//static.dpaw.wa.gov.au/static/firesource/media/firesource-tidy.css">
+    <title>Spatial Support System</title>
+</head>
+<body>
+    <div id="formsdialog" title="Forms"></div>
+    <div id="aboutdialog" title="Spatial Support System" class="auto-fade">
+        <div id="aboutlinks" class="clear-both">
+            <u><b>Useful Links</b></u><br>
+            <a href="https://fmsb.dpaw.wa.gov.au/images/documents/fire_doctrine/technical_guides/SpatialSupportSystem_User_Guide_20141203.pdf" target="_blank">User Guide</a> |
+            <a href="https://fmsb.dpaw.wa.gov.au/images/documents/fire_doctrine/technical_guides/FMS_SSS_InstallUninstall_Device_Form.pdf" target="_blank">Install/Uninstall Form</a>
+        </div>
+        <div id="abouttext">
+            <u><b>About</b></u><br>
+            <div class="clear-both">
+                <div class="float-left">Version:<br>(YY.MM.Rev)</div>
+                <div class="float-right" style="width:180px">15.11.1</div>
+            </div>
+            <div class="clear-both">
+                <div class="float-left">Author:</div>
+                <div class="float-right" style="width:180px"><a href="https://fmsb.dpaw.wa.gov.au/" target="_blank">Fire Management Services</a></div>
+            </div>
+            <div class="clear-both">
+                <div class="float-left">Contact:</div>
+                <div class="float-right" style="width:180px">
+                    Tel: 9219 9107<br>
+                    Fax: 9367 9913<br>
+                    <a href="mailto:asi@dpaw.wa.gov.au?subject=Spatial Support System Feedback">Email</a>
+                </div>
+            </div>
+            <div class="clear-both">
+                <div class="float-left"><u><b>Disclaimer:</b></u></div>
+                <div class="float-left">
+                    The Department of Parks and Wildlife does not guarantee that this map is without flaw of any kind and disclaims all liability for any error, or loss or other consequence which may arise from relying on any information depicted.
+Apart from any use permitted under the copyright act, no part of this map may be reproduced by any process without the written permission of the authors. Crown copyright reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui-layout-center">
+        <div id="map"></div>
+        <div class="slider-ui-zoom background ui-corner-br mapwidgets active-fade"></div>
+        <div class="slider-ui-zoom mapwidgets ui-corner-br active-fade">
+            <div class="ui-widget gisicon-zoomin mapwidgets"></div>
+            <div class="slider mapwidgets"></div>
+            <div class="ui-widget gisicon-zoomout mapwidgets"></div>
+        </div>
+        <div id="hoverdetails" class="ui-corner-all active-fade mapwidgets"></div>
+        <div id="mouseposition" class="ui-corner-br mapwidgets active-fade"></div>
+    </div>
+    <div id="mainToolbar" class="ui-layout-north">
+        <!-- lefthand toolbar -->
+        <span class="float-left">
+            <input type="checkbox" id="togglecontents" /><label title="Click to toggle Contents" for="togglecontents">Contents</label>
+            <input type="checkbox" id="toggletools" /><label title="Click to toggle Toolbar and Map Tools" for="toggletools">Tools</label>
+            <span id="toolset" class="tools">
+                <input type="radio" id="controlpan" name="control" checked="checked" /><label for="controlpan">Navigate Map</label>
+                <input type="radio" id="controlselect" name="control" /><label for="controlselect">Select Features</label>
+                <button id="controldeselect">Deselect All Features</button>
+                <button id="controlzoomselect">Zoom to Selected</button>
+                <button id="controlzoomdefault">Zoom to Default</button>
+                <input type="radio" id="controlmline" name="control" /><label for="controlmline">Measure Line</label>
+                <input type="radio" id="controlmarea" name="control" /><label for="controlmarea">Measure Area</label>
+            </span>
+            <span id="viewset" class="tools">
+                <button id="controlprevview">Previous View</button>
+                <button id="controlnextview">Next View</button>
+                <button id="controlquickpdf">Print to PDF (A3)</button>
+                <button id="controlquickjpg">Print to JPG (A3)</button>
+                <button id="controlmudmap">Open mudmap</button>
+                <input type="search" id="geocodequery" placeholder="Find a place in WA..." />
+            </span>
+            <span id="messagetext">
+            </span>
+        </span>
+        <!-- righthand toolbar -->
+        <span class="float-right">
+            <span class="account" style="padding:0px 4px;">{{ request.user.email }} - <a href="/logout">Logout</a></span>
+            <span id="refreshset">
+                <button title="Click to refresh all live layers" id="buttonrefresh">Refresh live layers</button>
+                <input type="checkbox" id="toggleabout" /><label title="Click for links and additional information" for="toggleabout">SSS</label>
+            </span>
+        </span>
+    </div>
+    <div id="contents" class="ui-layout-west">
+        <div class="ui-layout-north">
+            <div id="contentstabs" class="float-left">
+                <input type="radio" id="views-tab" name="contentstabs" /><label title="Click to view Views" for="views-tab">Maps &amp; Views</label>
+                <input type="radio" id="layers-tab" name="contentstabs" /><label title="Click to view Layers" for="layers-tab">Layers</label>
+                <input type="radio" id="vectors-tab" name="contentstabs" /><label title="Click to view Tracked Vehicles" id="vectors-tab-label" for="vectors-tab">Tracking</label>
+            </div>
+            <div class="vectors-select" style="display:none;">
+                <select title="Click to change the active vector layer" id="vectors-select" name="selectedvector" class="ui-state-default">
+                </select>
+            </div>
+        </div>
+        <div class="ui-layout-center">
+            <div class="ui-layout-hidden" style="display: none;">
+                <div id="views-div" title="Views">
+                    <div id="views-div-north">
+                        <div class="contentsearchlabel">Search: </div>
+                        <input title="Enter search tags here (separate tags with spaces, prefix tag with '+' to make tag mandatory)" id="viewsearchtext" class="searchtextbox" />
+                    </div>
+                    <div id="views-div-west" class="listtags">
+                        <b>Views</b>
+                        <ul class="list">
+                            <li class="listitem"><a searchid="">All</a></li>
+                            <li class="listitem"><a searchid="map">Maps</a></li>
+                            <li class="listitem"><a searchid="theme">Themes</a></li>
+                            <li><hr style="height: 1px" /></li>
+                            {% for fltr in viewfilters %}
+                            <li class="listitem"><a searchid="{{ fltr.1 }}">{{ fltr.0 }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div id="views-div-center">
+                        <ul id="views"></ul>
+                    </div>
+                </div>
+                <div id="layers-div" title="Layers">
+                    <div id="layers-div-west" class="listtags">
+                        <b>Layers</b><br>
+                        <ul class="list">
+                            <li class="listitem"><a searchid="">All Layers</a></li>
+                            <li class="listitem"><a searchid="default">Default Layers</a></li>
+                            <li class="listitem"><a searchid="checked">Active Layers</a></li>
+                            <li><hr style="height: 1px" /></li>
+                            {% for fltr in layerfilters %}
+                            <li class="listitem"><a searchid="{{ fltr.1 }}">{{ fltr.0 }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div id="layers-div-north">
+                        <div class="contentsearchlabel">Search: </div>
+                        <input title="Enter search terms here" id="layersearchtext" class="searchtextbox" />
+                        <input title="Check to select all layers in list below" type="checkbox" id="layersearchtoggle" />
+                    </div>
+                    <div id="layers-div-center">
+                        <ul id="layers"></ul>
+                    </div>
+                </div>
+                <div id="vectors-div" title="Vectors">
+                    <div id="vectors-div-west" class="listtags">
+                        <b>Vectors</b><br>
+                        <a id="allvectors" href="#">All</a><br>
+                        <a id="selectedvectors" href="#">Selected</a><br>
+                        <hr style="height: 1px" />
+                        <ul class="list">
+                            {% for fltr in trackingfilters %}
+                            <li class="listitem"><a searchid="{{ fltr.1 }}">{{ fltr.0 }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div id="vectors-div-north">
+                        <div class="contentsearchlabel">Search: </div>
+                        <input title="Enter search tags here (separate tags with spaces, prefix tag with '+' to make tag mandatory - e.g. 'donnelly +heavy_duty +1qan' searches 'donnelly, must include heavy duty, must include rego containing 1qan')" id="vectorsearchtext" class="searchtextbox" />
+                        <input title="Check to select all vectors in list below" type="checkbox" id="vectorsearchtoggle" />
+                    </div>
+                    <div id="vectors-div-center">
+                        <ul id="vectors"></ul>
+                    </div>
+                    <div id="vectors-div-south">
+                        <div class="clear-both"><b>History</b><br></div>
+                        <div id="history-div-west" class="float-left">
+                            <a id="lasthour-history" href="#">Last Hour</a><br>
+                            <a id="last3hours-history" href="#">Last 3 Hours</a><br>
+                            <a id="lastday-history" href="#">Last Day</a><br>
+                            <a id="lastweek-history" href="#">Last Week</a><br>
+                            <a id="lastmonth-history" href="#">Last Month</a>
+                            <ul class="list">
+                            </ul>
+                        </div>
+                        <div id="history-div-center" class="float-left">
+                            <div class="clear-both"><b>Date From:</b></div>
+                            <div class="clear-both">
+                                <input type="text" id="vector-history-from-date" readonly="readonly" size="10" />
+                                <input type="text" id="vector-history-from-time" size="4" maxlength="5" />
+                            </div>
+                            <div class="clear-both"><b>Date To:</b></div>
+                            <div class="clear-both">
+                                <input type="text" id="vector-history-to-date" readonly="readonly" size="10" />
+                                <input type="text" id="vector-history-to-time" size="4" maxlength="5" />
+                            </div>
+                            <div class="buttonset-history">
+                                <a title="Click to search history" id="go-history-button" class="go-history ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">Go</a>
+                                <a title="Click to clear the history search results" id="clear-history-button" class="clear-history ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">Clear</a>
+                            </div>
+                            <div class="clear-both"><br><b>Note:</b> History is retrieved only for selected vectors</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-layout-west"></div>
+            <div class="ui-layout-north"></div>
+            <div class="ui-layout-center"></div>
+            <div class="ui-layout-south"></div>
+        </div>
+        <div id="overviewmapdiv" class="ui-layout-south"></div>
+    </div>
+    <script type="text/javascript">
+        var django_permissions = {
+            is_staff:{{ request.user.is_staff|lower }},
+            is_superuser:{{ request.user.is_superuser|lower }},
+            username:'{{ request.user.username }}'
+        }
+        var django_query = eval({{ getparams|safe }});
+    </script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/libs/json3/3.3.2/json3.min.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/libs/openlayers/2.13.1/OpenLayers.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/firesource/libs/date.format.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/firesource/libs/jquery.loading.1.6.3.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/firesource/libs/jLinq-2.2.1.packed.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/libs/jquery-layout/1.4.3/jquery.layout_and_plugins.min.js"></script>
+    <script type="text/javascript" src="//static.dpaw.wa.gov.au/static/firesource/media/firesource.js"></script>
+</body>
+</html>

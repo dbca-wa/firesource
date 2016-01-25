@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{{ site_name }}</h1>
+{% endblock %}
+
+{% block userlinks %}
+    <a href="#">{% trans 'Documentation' %}</a> / <a href="{{ logout_url }}">{% trans 'Log out' %}</a>
+{% endblock %}
+
+{% block extrahead %}
+        <script type="text/javascript" src="js/libs/jquery-1.5.min.js"></script>
+        <script type="text/javascript" src="reports.js"></script>
+        <link rel="stylesheet" href="firesource-tidy.css">
+{% endblock %}
+
+{% block nav-global %}<span class="float-left"></span>{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/apps/sss">Home</a> &rsaquo; Maps</div>
+{% if errors %}
+<ul class="errorlist">{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+{% endif %}{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block content %}
+<div id="content-main">
+<div class="module">
+    <table class="datatable" summary="Maps">
+    <caption>Available Maps </caption>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Created By</th>
+            <th>Timestamp (UTC)</th>
+            <th>Effective To (UTC)</th>
+        </tr>
+    </thead>
+    {% for map in spatialmaps %}
+        <tr>
+            <td><a href="/apps/spatial/map/{{ map.map_id }}_{{ map.utc_string }}">{{ map.name }} ({{ map.map_type }})</a></td>
+            <td>{{ request.user.email }}</td>
+            <td>{{ map.utc_string }}</td>
+            <td>{{ map.effective_to }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+</div>
+{% endblock %}

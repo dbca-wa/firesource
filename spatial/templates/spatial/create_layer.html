@@ -1,0 +1,82 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+    {% load django_static %}
+    {% staticall %}
+        <script type="text/javascript" src="js/libs/proj4js-compressed.js"></script>
+        <script type="text/javascript" src="js/libs/OpenLayers.js"></script>
+    {% endstaticall %}
+{% endblock %}
+
+{% block title %}Create a layer{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{{ site_name }}</h1>
+{% endblock %}
+
+{% block userlinks %}
+    <a href="#">{% trans 'Documentation' %}</a> / <a href="{{ logout_url }}">{% trans 'Log out' %}</a>
+{% endblock %}
+
+{% block nav-global %}<span class="float-left"></span>{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="/apps/spatial/layers.html">{% trans 'Layers' %}</a> &rsaquo; Create</div>
+{% if errors %}
+<ul class="errorlist">{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul>
+{% endif %}{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block content %}
+<div id="content-main">
+<div class="module"> 
+    <table summary="Create a Layer">
+    <caption>Create a Layer</caption> 
+        <tr> 
+            <th scope="row">Upload New File (GDA94/WGS84)</th>
+            <form method="POST" enctype="multipart/form-data">
+            <td>
+                <input placeholder="Enter Name" name="layername">
+            </td><td>
+                <input type="file" name="layerfile">
+            </td><td>
+                <input type="submit" value="Create from file">
+            </td>
+            </form>
+        </tr>
+        <tr> 
+            <form method="POST">
+            <th scope="row">Create Layer from template</th>
+            <td>
+                <input placeholder="Enter Name" name="layername">
+            </td><td>
+                <select name="template">
+                    {% for template in templates %}
+                    <option value="{{ template }}">{{ template }}</option>
+                    {% endfor %}
+                </select>
+            </td><td>
+                <input type="submit" value="Create from template">
+            </td>
+            </form>
+        </tr> 
+        <tr> 
+            <th scope="row">Clone Dynamic Layer</th>
+            <form method="POST">
+            <td>Choose a source:
+            </td><td>
+                <select name="clone">
+                    {% for layer in querylayers %}
+                    <option value="{{ layer.layer_id }}">{{ layer.name }}</option>
+                    {% endfor %}
+                </select>
+            </td><td>
+                <input type="submit" value="Clone existing Layer">
+            </td>
+            <td>
+            </form>
+        </tr> 
+    </table> 
+</div>
+</div>
+{% endblock %}

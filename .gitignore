@@ -1,0 +1,13 @@
+*.pyc
+.hg*
+*.swp
+*.wsgi
+*.orig
+*.zip
+*.json
+*.pgdump
+*.log
+*.env
+settings.py
+venv/
+firesource_static/

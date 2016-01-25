@@ -1,0 +1,24 @@
+{% spaceless %}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    {% load django_static %}
+    {% staticall %}
+        {% block static %}
+        {% endblock %}
+    {% endstaticall %}
+    {% slimall %}
+        {% block slim %}
+        <link rel="stylesheet" href="firesource-tidy.css">
+        {% endblock slim %}
+    {% endslimall %}
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
+{% endspaceless %}
