@@ -4,9 +4,9 @@ from settings import SSS_URL
 
 from dpaw_utils import requests
 
-SSS_DEVICES_URL = SSS_URL + '/api/v1/device/?limit=10000&point__isnull=false&format=json'
+SSS_DEVICES_URL = SSS_URL + '/api/v1/device/?limit=10000&seen_age__lte=10080&point__isnull=false&format=json'
 SSS_DEVICE_URL = SSS_URL + "/api/v1/device/?deviceid={0}&format=json"
-SSS_HISTORY_URL = SSS_URL + "/api/v1/loggedpoint/?limit=10000&device={0}&seen__gte={1}&seen_lte{2}&format=json"
+SSS_HISTORY_URL = SSS_URL + "/api/v1/loggedpoint/?limit=10000&device={0}&seen__gte={1}&seen__lte={2}&format=json"
 
 def makefeatures(devices):
     featureCollection = {
@@ -45,7 +45,9 @@ def makefeatures(devices):
     return featureCollection
 
 def remote_devices(request):
-    devices = json.loads(requests.get(request,SSS_DEVICES_URL).content)["objects"]
+    #NEW_SSS_DEVICES = 'https://sss.dpaw.wa.gov.au/api/v1/device/?limit=10000&point__isnull=false&format=json'
+    #devices = json.loads(requests.get(request, NEW_SSS_DEVICES).content)["objects"]
+    devices = json.loads(requests.get(request, SSS_DEVICES_URL).content)["objects"]
     featureCollection = makefeatures(devices)
     return json.dumps(featureCollection)
 

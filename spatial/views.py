@@ -243,6 +243,7 @@ def layer_list(request, fmt="json", asobject=False):
     cache.set(cachekey, {"content":response.content, "mimetype":mimetype}, 600)
     return response
 
+
 def query_vector_layer(request, layerid, mimetype='application/json'):
     if request.method == "POST":
         postdict = json.loads(request.body)
