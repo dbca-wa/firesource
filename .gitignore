@@ -5,9 +5,14 @@
 *.orig
 *.zip
 *.json
-*.pgdump
 *.log
 *.env
 settings.py
 venv/
 firesource_static/
+
+# Database/fixture dumps
+*.pgdump
+*.dump
+*.db
+*.sqlite3
